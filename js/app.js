@@ -5,6 +5,7 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
     $scope.citiesPlaced = 0;
     $scope.kmLeft = 1500;
     $scope.cityToPlace = '';
+    var selectedPosition = {};    
     var cityList = [
         {city: 'London', country: 'United Kingdom'},
         {city: 'Madrid', country: 'Spain'},
@@ -13,21 +14,31 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
         {city: 'Paris', country: 'France'}
     ];
     var keyMaps = 'AIzaSyAWC7jPno7JWv4ciZBFE2iq-ANpmaxHn68';
-    var keyGeo = 'AIzaSyByUSKPMhbBlN-S_cPg_d0eJlkIGDB9LRs';
     var keyGeoServer = 'AIzaSyB0-QtFkqYFWQpNJm2RfhcK6x3j0NYdJJw';
-        
-    init();
-    
-    function init(){
-        $log.log('in init'); 
-    }
-    
+         
     $scope.placeCity = function(){
         $log.log('in place city');
     };
     
+    $scope.computeDistanceBetween = function(){
+        for(pos in cityList){
+            $log.log('cityList[pos]', cityList[pos]);
+            if(cityList[pos].city === $scope.cityToPlace){
+                var LatLn1 = new google.maps.LatLng(cityList[pos].lat, cityList[pos].lng);
+                break;
+            }
+        }
+        var LatLn2 = new google.maps.LatLng(selectedPosition.lat, selectedPosition.lng);
+        $log.log('LatLn2', LatLn2);
+        $log.log('LatLn1', LatLn1);
+        google.maps.geometry.spherical.computeDistanceBetween(LatLn1, LatLn2);
+    };
+    
     var map;
     $scope.initMap = function() {
+        
+        $scope.cityToPlace = cityList[0].city;
+        
         var myStyle = [{
             featureType: "all",
             elementType: "labels",
@@ -76,6 +87,13 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
             map: map
         });
         // map.panTo(latLng);
+        
+        selectedPosition = {
+            lat: marker.position.lat(),
+            lng: marker.position.lng()
+        };
+        
+        $log.log('selectedPosition', selectedPosition);
     }
     
 }]);
