@@ -21,14 +21,22 @@
     <body ng-controller="europeGameController">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">{{citiesPlaced}} cities placed</div>
-                <div class="col-md-6">{{kmLeft}} kilometers left</div>
+                <div class="col-md-12">
+                    <p class="bg-success text-center">{{citiesPlaced}} cities placed</p>
+                </div>
+            </div>
+            <div class="row">            
+                <div class="col-md-12">
+                    <p class="bg-success text-center">{{kmLeft}} kilometers left</p>
+                </div>
             </div>
             <div class="row">
-                <div class="col-md-12">Select the location of {{cityToPlace}}</div>
+                <div class="col-md-12">
+                    <p class="text-center">Select the location of {{cityToPlace | uppercase}}</p>
+                </div>
             </div>
-            <div class="row" style="height: 500px">
-                <div class="col-md-12" id="map"></div>
+            <div class="row">
+                <div class="center-block" id="map" style="height: 500px; min-width: 500px;"></div>
             </div>
             <div class="row">
                 <div class="col-md-4 pull-right">
@@ -40,6 +48,7 @@
         <script src="js/app.js"></script>
         <script>
             function initMap(){
+                console.log('in init map');
                 var scope = angular.element($("body")).scope();
                 scope.initMap();
             }

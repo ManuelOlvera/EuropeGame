@@ -42,7 +42,7 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
         }
         $log.log('latLn2', latLn2);
         $log.log('latLn1', latLn1);
-        distance = google.maps.geometry.spherical.computeDistanceBetween(latLn1, latLn2);
+        distance = google.maps.geometry.spherical.computeDistanceBetween(latLn1, latLn2) / 1000;
         $log.log('distance', distance);
         if (distance > 50) {
             $scope.message = 'Error, you missed by ' + distance + ' kilometers';
@@ -55,8 +55,10 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
     
     $scope.initMap = function () {
         
-        $scope.cityToPlace = cityList[0].city;
-        
+        $scope.$apply(function () {
+            $scope.cityToPlace = cityList[0].city;          
+        });
+                
         var myStyle = [{
             featureType: "all",
             elementType: "labels",
@@ -64,7 +66,6 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
                 { visibility: "off" }
             ]
         }],
-            i,
             address;
 
         map = new google.maps.Map(document.getElementById('map'), {
@@ -83,21 +84,9 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
             placeMarkerAndPanTo(e.latLng, map);
         });
         
-        for (i = 0; i < cityList.length; i + 1) {
+        for (var i = 0; i < cityList.length; i++) {
             address = cityList[i].city + ', ' + cityList[i].country;
-            /*(function (pos) {
-                $.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + address + '&key=' + keyGeoServer, function(data) {      
-                    $log.log('geo data', data);
-                    try {
-                        cityList[pos].lat = data.results[0].geometry.location.lat;
-                        cityList[pos].lng = data.results[0].geometry.location.lng;
-                        $log.log('cityList -> ', cityList);
-                    } catch (err) {
-                        $log.log('error getting latitude and longitude', err);
-                    }
-                }); 
-            })(i);*/
-            getGeoPosition(address, i);
+            // getGeoPosition(address, i);
         }
     };
 
