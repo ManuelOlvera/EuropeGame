@@ -38,12 +38,12 @@
             </div>
         </div>
         <script src="js/app.js"></script>
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWC7jPno7JWv4ciZBFE2iq-ANpmaxHn68&callback=initMap"></script>
         <script>
             function initMap(){
                 var scope = angular.element($("body")).scope();
                 scope.initMap();
             }
         </script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWC7jPno7JWv4ciZBFE2iq-ANpmaxHn68&callback=initMap&libraries=geometry"></script>
     </body>
 </html>
