@@ -9,8 +9,7 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
     $scope.kmLeft = 1500;
     $scope.cityToPlace = '';
     $scope.message = '';
-    var selectedPosition = {},
-        cityList = [
+    var cityList = [
             {city: 'London', country: 'United Kingdom'},
             {city: 'Madrid', country: 'Spain'},
             {city: 'Berli', country: 'Germany'},
@@ -19,7 +18,8 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
         ],
         keyMaps = 'AIzaSyAWC7jPno7JWv4ciZBFE2iq-ANpmaxHn68',
         keyGeoServer = 'AIzaSyB0-QtFkqYFWQpNJm2RfhcK6x3j0NYdJJw',
-        map;
+        map,
+        marker;
          
     $scope.placeCity = function () {
         $log.log('in place city');
@@ -28,7 +28,7 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
     $scope.computeDistanceBetween = function () {
         var pos,
             latLn1,
-            latLn2 = new google.maps.LatLng(selectedPosition.lat, selectedPosition.lng),
+            latLn2 = new google.maps.LatLng(marker.position.lat(), marker.position.lng()),
             distance;
         
         for (pos in cityList) {
@@ -56,7 +56,7 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
     $scope.initMap = function () {
         
         $scope.$apply(function () {
-            $scope.cityToPlace = cityList[0].city;          
+            $scope.cityToPlace = cityList[0].city;
         });
                 
         var myStyle = [{
@@ -66,7 +66,8 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
                 { visibility: "off" }
             ]
         }],
-            address;
+            address,
+            i;
 
         map = new google.maps.Map(document.getElementById('map'), {
             mapTypeControlOptions: {
@@ -84,26 +85,22 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
             placeMarkerAndPanTo(e.latLng, map);
         });
         
-        for (var i = 0; i < cityList.length; i++) {
+        for (i = 0; i < cityList.length; i = i + 1) {
             address = cityList[i].city + ', ' + cityList[i].country;
-            // getGeoPosition(address, i);
+            getGeoPosition(address, i);
         }
     };
 
     function placeMarkerAndPanTo(latLng, map) {
         $log.log('in placeMarkerAndPanTo latLng ', latLng);
-        var marker = new google.maps.Marker({
+        if (marker) {
+            marker.setMap(null);
+        }
+        marker = new google.maps.Marker({
             position: latLng,
             map: map
         });
         // map.panTo(latLng);
-        
-        selectedPosition = {
-            lat: marker.position.lat(),
-            lng: marker.position.lng()
-        };
-        
-        $log.log('selectedPosition', selectedPosition);
     }
     
     function getGeoPosition(address, pos) {
