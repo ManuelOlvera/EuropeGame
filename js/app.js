@@ -3,7 +3,7 @@
 
 var europeGameApp = angular.module('europeGameApp', []);
 
-europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$timeout', function ($scope, $log, $q, $timeout) {
+europeGameApp.controller('europeGameController', ['$scope', '$log', function ($scope, $log) {
     
     $scope.citiesPlaced = 0;
     $scope.kmLeft = 1500;
