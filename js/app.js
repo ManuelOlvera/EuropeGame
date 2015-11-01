@@ -9,17 +9,22 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
     $scope.kmLeft = 1500;
     $scope.cityToPlace = '';
     $scope.message = '';
+    $scope.winningMessage = '\nYOU WON!';
+    $scope.losingMessage = '\nYOU LOST!';
+    $scope.gameFinished = false;
     var cityList = [
             {city: 'London', country: 'United Kingdom'},
             {city: 'Madrid', country: 'Spain'},
-            {city: 'Berli', country: 'Germany'},
+            {city: 'Berlin', country: 'Germany'},
             {city: 'Bratislava', country: 'Slovakia'},
             {city: 'Paris', country: 'France'}
         ],
         keyMaps = 'AIzaSyAWC7jPno7JWv4ciZBFE2iq-ANpmaxHn68',
         keyGeoServer = 'AIzaSyB0-QtFkqYFWQpNJm2RfhcK6x3j0NYdJJw',
         map,
-        marker;
+        marker,
+        nextCity = 0,
+        cityLenght = cityList.length;
          
     $scope.placeCity = function () {
         $log.log('in place city');
@@ -42,7 +47,7 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
         }
         $log.log('latLn2', latLn2);
         $log.log('latLn1', latLn1);
-        distance = google.maps.geometry.spherical.computeDistanceBetween(latLn1, latLn2) / 1000;
+        distance = Math.round(google.maps.geometry.spherical.computeDistanceBetween(latLn1, latLn2) / 1000);
         $log.log('distance', distance);
         if (distance > 50) {
             $scope.message = 'Error, you missed by ' + distance + ' kilometers';
@@ -51,21 +56,47 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
             $scope.message = 'Well done! That was within the 50km margin';
             $scope.citiesPlaced = $scope.citiesPlaced + 1;
         }
+        
+        nextCity = nextCity + 1;
+        if (nextCity < cityLenght) {
+            $scope.cityToPlace = cityList[nextCity].city;
+        } else {
+            $scope.cityToPlace = '';
+            $scope.gameFinished = true;
+        }
+        
+        $log.log('nextCity', nextCity);
+        $log.log('cityLenght - 1', cityLenght - 1);
     };
     
     $scope.initMap = function () {
-        
         $scope.$apply(function () {
             $scope.cityToPlace = cityList[0].city;
         });
                 
-        var myStyle = [{
-            featureType: "all",
-            elementType: "labels",
-            stylers: [
-                { visibility: "off" }
-            ]
-        }],
+        var myStyle = [
+            { "stylers": [
+                { "visibility": "off" }
+            ]},
+            {
+                "featureType": "water",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "visibility": "on"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative.country",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "visibility": "on"
+                    }
+                ]
+            }
+        ],
             address,
             i;
 
@@ -73,6 +104,7 @@ europeGameApp.controller('europeGameController', ['$scope', '$log', '$q', '$time
             mapTypeControlOptions: {
                 mapTypeIds: ['mystyle', google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.TERRAIN]
             },
+            disableDefaultUI: true,
             center: new google.maps.LatLng(30, 0),
             zoom: 3,
             mapTypeId: 'mystyle'
